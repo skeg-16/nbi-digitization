@@ -1,0 +1,49 @@
+import { NextResponse } from 'next/server';
+import { supabaseAdmin } from '../../../lib/supabase';
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get('search') || '';
+  const status = searchParams.get('status') || '';
+
+  try {
+    let query = supabaseAdmin.from('complaints').select('*').order('created_at', { ascending: false });
+
+    if (status) {
+      query = query.eq('status', status);
+    }
+    
+    if (search) {
+      // Case-insensitive search on complainant, subject, and ccd_no
+      query = query.or(`complainant.ilike.%${search}%,subject.ilike.%${search}%,ccd_no.ilike.%${search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching records:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(request) {
+  try {
+    const data = await request.json();
+    // Prevent empty string from breaking Postgres date type
+    if (data.date_received === '') data.date_received = null;
+
+    const { data: newRecord, error } = await supabaseAdmin
+      .from('complaints')
+      .insert([data])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return NextResponse.json({ success: true, data: newRecord });
+  } catch (error) {
+    console.error('Error creating record:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

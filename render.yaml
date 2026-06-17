@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: ocr-service
+    env: docker
+    region: oregon
+    plan: free
+    dockerContext: ./ocr-service
+    dockerfilePath: ./ocr-service/Dockerfile
+    envVars:
+      - key: PORT
+        value: 8000
+
+  - type: web
+    name: document-web
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd web && npm install && npm run build
+    startCommand: cd web && npm start
+    envVars:
+      - key: OCR_SERVICE_URL
+        fromService:
+          type: web
+          name: ocr-service
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
