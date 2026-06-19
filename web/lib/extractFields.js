@@ -55,8 +55,5 @@ export function extractFields(ocrData) {
       extracted[config.name] = foundValue.trim();
     }
   }
-
-  }
-
   return extracted;
 }
