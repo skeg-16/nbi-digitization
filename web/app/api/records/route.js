@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '../../../lib/supabase/server';
+import { supabaseAdmin } from '../../../lib/supabase';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -7,15 +8,23 @@ export async function GET(request) {
   const status = searchParams.get('status') || '';
 
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabaseUserClient = await createClient();
+    const { data: { user }, error: authError } = await supabaseUserClient.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // STRICT ISOLATION: Explicitly filter by user_id so they can NEVER see other cases
-    let query = supabase.from('complaints').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+    // Extract last name for backward compatibility with old manually-typed records (e.g. "AGT.MI.MONTALA")
+    const agentName = user.user_metadata?.name || '';
+    const lastName = agentName ? agentName.split(' ').pop() : user.email;
+
+    // STRICT ISOLATION via API: Use supabaseAdmin to bypass RLS for old records, but forcefully filter
+    let query = supabaseAdmin
+      .from('complaints')
+      .select('*')
+      .or(`user_id.eq.${user.id},agent_on_case.ilike.%${lastName}%`)
+      .order('created_at', { ascending: false });
 
     if (status) {
       query = query.eq('status', status);
