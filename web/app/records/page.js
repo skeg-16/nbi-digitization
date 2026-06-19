@@ -10,7 +10,6 @@ export default function RecordsPage() {
   
   // Filters
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   
   // Modals
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -25,7 +24,6 @@ export default function RecordsPage() {
     try {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
-      if (statusFilter) params.append('status', statusFilter);
       
       const res = await fetch(`/api/records?${params.toString()}`);
       const result = await res.json();
@@ -37,7 +35,7 @@ export default function RecordsPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter]);
+  }, [search]);
 
   useEffect(() => {
     fetchRecords();
@@ -60,9 +58,8 @@ export default function RecordsPage() {
   const handleAdd = () => {
     setCurrentRecord(null);
     setFormData({
-      record_no: '', date_received: '', ccd_no: '', nbi_ccn: '',
-      nature_of_case: '', complainant: '', subject: '', agent_on_case: '',
-      age_gender: '', contact_no: '', status: '', re_assigned: ''
+      date_received: '', agent_on_case: '', ccd_no: '', 
+      nbi_ccn: '', complainant: '', nature_of_case: ''
     });
     setIsEditModalOpen(true);
   };
@@ -116,81 +113,80 @@ export default function RecordsPage() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[var(--bg-color)]">
       {/* Action Bar */}
-      <div className="action-bar flex flex-col gap-4 p-5 bg-[var(--panel-bg)] border-b border-[var(--border-color)] flex-shrink-0">
+      <div className="action-bar flex flex-col gap-5 p-6 bg-[var(--panel-bg)] border-b border-[var(--border-color)] flex-shrink-0 shadow-sm z-10">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h2 className="m-0 text-xl font-semibold text-[var(--text-main)] tracking-wide" style={{ color: "var(--nbi-blue)" }}>
-              Complaint Registry
-            </h2>
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 bg-[var(--nbi-blue)] rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            </div>
+            <div>
+              <h2 className="m-0 text-2xl font-extrabold text-[var(--nbi-blue)] tracking-tight">
+                Agt. MI. MONTALA
+              </h2>
+              <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">Official Case Registry</p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="btn-formal" onClick={() => router.push('/')}>Home</button>
-            <button className="btn-formal btn-primary px-4 py-2" onClick={handleAdd}>+ Add Record</button>
+            <button className="btn-formal hover:bg-gray-50" onClick={() => router.push('/')}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+              Home
+            </button>
+            <button className="btn-formal btn-primary px-5 py-2 shadow-md shadow-blue-900/10" onClick={handleAdd}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+              Add Record
+            </button>
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="relative">
+            <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input 
               type="text" 
-              className="form-input w-72" 
-              placeholder="Search complainant, subject, CCD no..." 
+              className="form-input w-80 pl-10 bg-gray-50 focus:bg-white" 
+              placeholder="Search NBI-CCN, CCD no, complainant..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select 
-              className="form-select w-40"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="">All Statuses</option>
-              <option value="Waiting">Waiting</option>
-              <option value="Serving">Serving</option>
-              <option value="Served">Served</option>
-              <option value="Skipped">Skipped</option>
-              <option value="No-show">No-show</option>
-            </select>
           </div>
         </div>
       </div>
 
       {/* Grid Workspace */}
-      <div className="grid-workspace p-5 flex-1 overflow-auto">
-        <div className="bg-[var(--panel-bg)] rounded-lg border border-[var(--border-color)] overflow-hidden shadow-sm">
+      <div className="grid-workspace p-6 flex-1 overflow-auto bg-gray-50/50">
+        <div className="bg-[var(--panel-bg)] rounded-xl border border-[var(--border-color)] overflow-hidden shadow-sm">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Date Received</th>
-                <th>Record No.</th>
+                <th>Date</th>
                 <th>CCD No.</th>
+                <th>NBI-CCN</th>
                 <th>Complainant</th>
-                <th>Subject</th>
                 <th>Nature of Case</th>
-                <th>Status</th>
-                <th className="text-center">Actions</th>
+                <th className="text-center w-24">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="8" className="text-center py-8">Loading data...</td></tr>
+                <tr><td colSpan="6" className="text-center py-12 text-[var(--text-muted)] font-medium">Loading official records...</td></tr>
               ) : records.length === 0 ? (
-                <tr><td colSpan="8" className="text-center py-8 text-[var(--text-muted)]">No records found.</td></tr>
+                <tr><td colSpan="6" className="text-center py-12 text-[var(--text-muted)] font-medium">No records found.</td></tr>
               ) : (
                 records.map(record => (
-                  <tr key={record.id}>
-                    <td>{record.date_received || '-'}</td>
-                    <td className="font-medium">{record.record_no}</td>
-                    <td>{record.ccd_no}</td>
-                    <td>{record.complainant}</td>
-                    <td>{record.subject}</td>
-                    <td className="max-w-[200px] truncate">{record.nature_of_case}</td>
-                    <td>
-                      <span className="status-badge" data-status={record.status || 'Waiting'}>
-                        {record.status || '-'}
-                      </span>
-                    </td>
-                    <td className="text-center space-x-2">
-                      <button className="btn-formal text-xs py-1 px-2" onClick={() => handleEdit(record)}>Edit</button>
-                      <button className="btn-formal btn-danger text-xs py-1 px-2" onClick={() => handleDelete(record)}>Del</button>
+                  <tr key={record.id} className="group transition-colors">
+                    <td className="whitespace-nowrap font-medium text-gray-700">{record.date_received || '-'}</td>
+                    <td className="font-semibold text-[var(--nbi-blue)]">{record.ccd_no || '-'}</td>
+                    <td className="font-mono text-sm bg-gray-50 px-2 py-1 rounded inline-block mt-1.5 border border-gray-100">{record.nbi_ccn || '-'}</td>
+                    <td className="font-medium text-gray-900">{record.complainant || '-'}</td>
+                    <td className="max-w-[300px] truncate text-gray-600" title={record.nature_of_case}>{record.nature_of_case || '-'}</td>
+                    <td className="text-center">
+                      <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors" onClick={() => handleEdit(record)} title="Edit Record">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </button>
+                        <button className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors" onClick={() => handleDelete(record)} title="Delete Record">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -202,54 +198,39 @@ export default function RecordsPage() {
 
       {/* Edit Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-          <div className="bg-[var(--panel-bg)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="flex justify-between items-center mb-5 border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-lg font-bold text-[var(--text-main)]">{currentRecord ? 'Edit Record' : 'Add Record'}</h3>
-              <button className="text-[var(--text-muted)] hover:text-black text-xl" onClick={() => setIsEditModalOpen(false)}>&times;</button>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--panel-bg)] rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100">
+            <div className="flex justify-between items-center mb-6 border-b border-[var(--border-color)] pb-4">
+              <h3 className="text-xl font-extrabold text-[var(--nbi-blue)] tracking-tight">{currentRecord ? 'Edit Official Record' : 'Add Official Record'}</h3>
+              <button className="text-[var(--text-muted)] hover:text-black hover:bg-gray-100 rounded-full p-1 transition-colors" onClick={() => setIsEditModalOpen(false)}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
             </div>
             <form onSubmit={submitForm}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {[
-                  { key: 'record_no', label: 'Record No.' },
-                  { key: 'date_received', label: 'Date Received', type: 'date' },
+                  { key: 'date_received', label: 'Date', type: 'date' },
+                  { key: 'agent_on_case', label: 'Agent on Case' },
                   { key: 'ccd_no', label: 'CCD No.' },
                   { key: 'nbi_ccn', label: 'NBI-CCN' },
-                  { key: 'nature_of_case', label: 'Nature of Case' },
-                  { key: 'complainant', label: 'Complainant' },
-                  { key: 'subject', label: 'Subject' },
-                  { key: 'agent_on_case', label: 'Agent on Case' },
-                  { key: 'age_gender', label: 'Age/Gender' },
-                  { key: 'contact_no', label: 'Contact No.' },
-                  { key: 're_assigned', label: 'Re-assigned' }
+                  { key: 'complainant', label: 'Complainant / RP' },
+                  { key: 'nature_of_case', label: 'Nature of Case' }
                 ].map(field => (
-                  <div key={field.key} className="flex flex-col">
-                    <label className="text-xs font-semibold text-[var(--text-muted)] mb-1">{field.label}</label>
+                  <div key={field.key} className="flex flex-col group">
+                    <label className="text-xs font-bold text-[var(--text-main)] mb-1.5 uppercase tracking-wide">{field.label}</label>
                     <input 
                       type={field.type || 'text'} 
                       name={field.key} 
                       value={formData[field.key] || ''} 
                       onChange={handleFormChange} 
-                      className="form-input" 
+                      className="form-input bg-gray-50 focus:bg-white transition-colors" 
                     />
                   </div>
                 ))}
-                
-                <div className="flex flex-col">
-                  <label className="text-xs font-semibold text-[var(--text-muted)] mb-1">Status</label>
-                  <select name="status" value={formData.status || ''} onChange={handleFormChange} className="form-select">
-                    <option value="">Select Status</option>
-                    <option value="Waiting">Waiting</option>
-                    <option value="Serving">Serving</option>
-                    <option value="Served">Served</option>
-                    <option value="Skipped">Skipped</option>
-                    <option value="No-show">No-show</option>
-                  </select>
-                </div>
               </div>
-              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[var(--border-color)]">
-                <button type="button" className="btn-formal" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                <button type="submit" className="btn-formal btn-primary">Save Changes</button>
+              <div className="flex justify-end gap-3 mt-8 pt-5 border-t border-[var(--border-color)]">
+                <button type="button" className="btn-formal hover:bg-gray-50" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
+                <button type="submit" className="btn-formal btn-primary shadow-lg shadow-blue-900/20 px-6">Save Record</button>
               </div>
             </form>
           </div>
@@ -258,18 +239,20 @@ export default function RecordsPage() {
 
       {/* Delete Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-          <div className="bg-[var(--panel-bg)] rounded-xl p-6 w-full max-w-md shadow-2xl">
-            <div className="flex justify-between items-center mb-4 border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-lg font-bold text-[var(--red)]">Delete Record</h3>
-              <button className="text-[var(--text-muted)] hover:text-black text-xl" onClick={() => setIsDeleteModalOpen(false)}>&times;</button>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--panel-bg)] rounded-2xl p-8 w-full max-w-md shadow-2xl border border-red-100">
+            <div className="flex items-center gap-3 mb-5 border-b border-red-100 pb-4">
+              <div className="bg-red-100 p-2 rounded-full">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </div>
+              <h3 className="text-xl font-bold text-[var(--red)] tracking-tight">Delete Record</h3>
             </div>
-            <p className="text-sm text-[var(--text-main)] mb-6">
-              Are you absolutely sure you want to permanently delete record <strong>{currentRecord?.record_no}</strong>? This action cannot be undone.
+            <p className="text-sm text-gray-600 mb-8 leading-relaxed">
+              Are you absolutely sure you want to permanently delete this record? This action cannot be undone and will be removed from the official registry.
             </p>
             <div className="flex justify-end gap-3">
-              <button className="btn-formal" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
-              <button className="btn-formal btn-danger" onClick={confirmDelete}>Delete</button>
+              <button className="btn-formal hover:bg-gray-50" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
+              <button className="btn-formal btn-danger px-6" onClick={confirmDelete}>Delete Permanently</button>
             </div>
           </div>
         </div>

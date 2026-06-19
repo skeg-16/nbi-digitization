@@ -6,9 +6,7 @@ import { useRouter } from 'next/navigation';
 export default function ReviewPage() {
   const [formData, setFormData] = useState({
     date_received: '', agent_on_case: '', ccd_no: '', 
-    nbi_ccn: '', acmo_no: '', subject: '', 
-    complainant: '', nature_of_case: '',
-    age_gender: '', contact_no: '', status: '', re_assigned: ''
+    nbi_ccn: '', complainant: '', nature_of_case: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -19,7 +17,6 @@ export default function ReviewPage() {
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
-        // Only merge keys that exist in our 12 fields
         setFormData(prev => {
           const newData = { ...prev };
           for (const key in parsed) {
@@ -64,49 +61,37 @@ export default function ReviewPage() {
   const formatLabel = (key) => key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] flex flex-col items-center p-4 py-10">
-      <div className="max-w-2xl w-full bg-[var(--panel-bg)] rounded-xl shadow border border-[var(--border-color)] p-8 space-y-6">
-        <div className="flex items-center gap-3 border-b border-[var(--border-color)] pb-4 mb-4">
-          <h1 className="text-2xl font-bold" style={{ color: "var(--nbi-blue)" }}>Review Extracted Data</h1>
+    <div className="min-h-screen bg-[var(--bg-color)] flex flex-col items-center p-4 py-12 px-6">
+      <div className="max-w-3xl w-full bg-[var(--panel-bg)] rounded-2xl shadow-2xl border border-[var(--border-color)] p-10 space-y-8 animate-fade-in">
+        <div className="border-b border-[var(--border-color)] pb-5">
+          <h1 className="text-3xl font-extrabold tracking-tight text-[var(--nbi-blue)]">Review Extracted Data</h1>
+          <p className="text-[var(--text-muted)] text-sm mt-2">Verify the 6 core fields below before finalizing the official case assignment.</p>
         </div>
         
-        <p className="text-[var(--text-muted)] text-sm mb-6">Verify the 12 extracted fields below before finalizing the official record.</p>
-        
-        {error && <div className="text-[var(--red)] text-sm bg-red-50 p-3 rounded">{error}</div>}
+        {error && <div className="text-[var(--red)] text-sm font-medium bg-red-50/50 border border-red-200 p-4 rounded-xl">{error}</div>}
         
         <form id="reviewForm" onSubmit={handleSave}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {Object.keys(formData).map((key) => (
-              <div key={key} className="flex flex-col">
-                <label className="form-label mb-1 text-sm font-semibold text-[var(--text-muted)]">
+              <div key={key} className="flex flex-col group">
+                <label className="form-label mb-2 text-sm font-bold text-[var(--text-main)] tracking-wide uppercase text-xs">
                   {formatLabel(key)}
                 </label>
-                {key === 'status' ? (
-                  <select name={key} value={formData[key]} onChange={handleChange} className="form-select">
-                    <option value="">Select Status</option>
-                    <option value="Waiting">Waiting</option>
-                    <option value="Serving">Serving</option>
-                    <option value="Served">Served</option>
-                    <option value="Skipped">Skipped</option>
-                    <option value="No-show">No-show</option>
-                  </select>
-                ) : (
-                  <input
-                    type={key === 'date_received' ? 'date' : 'text'}
-                    name={key}
-                    value={formData[key]}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                )}
+                <input
+                  type={key === 'date_received' ? 'date' : 'text'}
+                  name={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  className="form-input w-full transition-all duration-200"
+                />
               </div>
             ))}
           </div>
 
-          <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-[var(--border-color)]">
-            <button type="button" className="btn-formal" onClick={() => router.push('/')} disabled={loading}>Cancel</button>
-            <button type="submit" className="btn-formal btn-primary" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Record'}
+          <div className="flex justify-end gap-4 mt-12 pt-6 border-t border-[var(--border-color)]">
+            <button type="button" className="btn-formal hover:bg-gray-50" onClick={() => router.push('/')} disabled={loading}>Cancel</button>
+            <button type="submit" className="btn-formal btn-primary shadow-lg shadow-blue-900/20 px-8" disabled={loading}>
+              {loading ? 'Processing...' : 'Save Record'}
             </button>
           </div>
         </form>
