@@ -21,7 +21,7 @@ export async function login(formData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/records')
+  redirect('/')
 }
 
 export async function logout() {

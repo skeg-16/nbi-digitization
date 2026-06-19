@@ -37,6 +37,7 @@ export async function updateSession(request) {
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login')
   const isProtected = 
+    request.nextUrl.pathname === '/' ||
     request.nextUrl.pathname.startsWith('/records') || 
     request.nextUrl.pathname.startsWith('/dashboard') || 
     request.nextUrl.pathname.startsWith('/capture')
@@ -49,9 +50,9 @@ export async function updateSession(request) {
   }
 
   if (isAuthRoute && user) {
-    // user is already logged in, redirect to records
+    // user is already logged in, redirect to home page
     const url = request.nextUrl.clone()
-    url.pathname = '/records'
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
