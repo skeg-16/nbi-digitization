@@ -177,7 +177,7 @@ export default function RecordsPage() {
             </div>
             <div>
               <h2 className="m-0 text-2xl font-extrabold text-[var(--nbi-blue)] tracking-tight">
-                {session.user.user_metadata?.full_name || session.user.email}
+                {session.user.email}
               </h2>
               <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">Official Case Registry</p>
             </div>
