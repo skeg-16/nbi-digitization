@@ -230,7 +230,7 @@ export default function RecordsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {[
                   { key: 'date_received', label: 'Date', type: 'date' },
-                  { key: 'agent_on_case', label: 'Agent on Case' },
+                  { key: 'agent_on_case', label: 'Agent on Case', readOnly: true },
                   { key: 'ccd_no', label: 'CCD No.' },
                   { key: 'nbi_ccn', label: 'NBI-CCN' },
                   { key: 'complainant', label: 'Complainant / RP' },
@@ -241,9 +241,10 @@ export default function RecordsPage() {
                     <input 
                       type={field.type || 'text'} 
                       name={field.key} 
-                      value={formData[field.key] || ''} 
-                      onChange={handleFormChange} 
-                      className="form-input bg-gray-50 focus:bg-white transition-colors" 
+                      value={field.key === 'agent_on_case' ? agentName : (formData[field.key] || '')} 
+                      onChange={field.readOnly ? undefined : handleFormChange} 
+                      readOnly={field.readOnly}
+                      className={`form-input transition-colors ${field.readOnly ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-gray-50 focus:bg-white'}`} 
                     />
                   </div>
                 ))}

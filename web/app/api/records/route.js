@@ -42,6 +42,8 @@ export async function POST(request) {
 
     // Automatically inject the user_id of the agent creating the record
     data.user_id = user.id;
+    // Force the agent_on_case text to exactly match the logged-in user
+    data.agent_on_case = user.user_metadata?.name || user.email;
 
     const { data: newRecord, error } = await supabase
       .from('complaints')

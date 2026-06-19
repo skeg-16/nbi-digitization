@@ -9,6 +9,12 @@ export async function PUT(request, { params }) {
     if (data.date_received === '') data.date_received = null;
 
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Prevent malicious or accidental edits to the agent_on_case field
+    if (user) {
+      data.agent_on_case = user.user_metadata?.name || user.email;
+    }
 
     const { data: updatedRecord, error } = await supabase
       .from('complaints')
