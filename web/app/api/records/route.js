@@ -8,7 +8,14 @@ export async function GET(request) {
 
   try {
     const supabase = await createClient();
-    let query = supabase.from('complaints').select('*').order('created_at', { ascending: false });
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // STRICT ISOLATION: Explicitly filter by user_id so they can NEVER see other cases
+    let query = supabase.from('complaints').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
 
     if (status) {
       query = query.eq('status', status);
