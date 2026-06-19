@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '../../../lib/supabase';
+import { createClient } from '../../../lib/supabase/server';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -7,14 +7,14 @@ export async function GET(request) {
   const status = searchParams.get('status') || '';
 
   try {
-    let query = supabaseAdmin.from('complaints').select('*').order('created_at', { ascending: false });
+    const supabase = await createClient();
+    let query = supabase.from('complaints').select('*').order('created_at', { ascending: false });
 
     if (status) {
       query = query.eq('status', status);
     }
     
     if (search) {
-      // Case-insensitive search on complainant, subject, and ccd_no
       query = query.or(`complainant.ilike.%${search}%,subject.ilike.%${search}%,ccd_no.ilike.%${search}%`);
     }
 
@@ -31,10 +31,19 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const data = await request.json();
-    // Prevent empty string from breaking Postgres date type
     if (data.date_received === '') data.date_received = null;
 
-    const { data: newRecord, error } = await supabaseAdmin
+    const supabase = await createClient();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Automatically inject the user_id of the agent creating the record
+    data.user_id = user.id;
+
+    const { data: newRecord, error } = await supabase
       .from('complaints')
       .insert([data])
       .select()

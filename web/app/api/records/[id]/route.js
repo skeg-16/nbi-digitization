@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '../../../../lib/supabase';
+import { createClient } from '../../../../lib/supabase/server';
 
 export async function PUT(request, { params }) {
   try {
     const id = params.id;
     const data = await request.json();
     
-    // Prevent empty string from breaking Postgres date type
     if (data.date_received === '') data.date_received = null;
 
-    const { data: updatedRecord, error } = await supabaseAdmin
+    const supabase = await createClient();
+
+    const { data: updatedRecord, error } = await supabase
       .from('complaints')
       .update(data)
       .eq('id', id)
@@ -28,7 +29,9 @@ export async function DELETE(request, { params }) {
   try {
     const id = params.id;
     
-    const { error } = await supabaseAdmin
+    const supabase = await createClient();
+
+    const { error } = await supabase
       .from('complaints')
       .delete()
       .eq('id', id);

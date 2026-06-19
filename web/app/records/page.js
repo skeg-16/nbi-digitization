@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '../../lib/supabase/client';
+import { logout } from '../login/actions';
 
 export default function RecordsPage() {
   const router = useRouter();
@@ -18,6 +20,9 @@ export default function RecordsPage() {
   
   // Form State for Add/Edit
   const [formData, setFormData] = useState({});
+  const [agentName, setAgentName] = useState('Loading...');
+
+  const supabase = createClient();
 
   const fetchRecords = useCallback(async () => {
     setLoading(true);
@@ -38,8 +43,19 @@ export default function RecordsPage() {
   }, [search]);
 
   useEffect(() => {
+    async function getUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && user.user_metadata && user.user_metadata.name) {
+        setAgentName(user.user_metadata.name);
+      } else if (user) {
+        setAgentName(user.email);
+      } else {
+        setAgentName('Guest');
+      }
+    }
+    getUser();
     fetchRecords();
-  }, [fetchRecords]);
+  }, [fetchRecords, supabase.auth]);
 
   // Debounce search
   useEffect(() => {
@@ -121,7 +137,7 @@ export default function RecordsPage() {
             </div>
             <div>
               <h2 className="m-0 text-2xl font-extrabold text-[var(--nbi-blue)] tracking-tight">
-                Agt. MI. MONTALA
+                {agentName}
               </h2>
               <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">Official Case Registry</p>
             </div>
@@ -134,6 +150,10 @@ export default function RecordsPage() {
             <button className="btn-formal btn-primary px-5 py-2 shadow-md shadow-blue-900/10" onClick={handleAdd}>
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               Add Record
+            </button>
+            <button className="btn-formal text-red-600 border-red-200 hover:bg-red-50 ml-2" onClick={() => logout()}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              Logout
             </button>
           </div>
         </div>
