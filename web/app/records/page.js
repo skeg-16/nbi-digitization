@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
 
 export default function RecordsPage() {
   const router = useRouter();
-  const [session, setSession] = useState(null);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -21,66 +19,35 @@ export default function RecordsPage() {
   // Form State for Add/Edit
   const [formData, setFormData] = useState({});
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        router.push('/login');
-      } else {
-        setSession(session);
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        router.push('/login');
-      } else {
-        setSession(session);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [router]);
-
   const fetchRecords = useCallback(async () => {
-    if (!session) return;
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       
-      const res = await fetch(`/api/records?${params.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
+      const res = await fetch(`/api/records?${params.toString()}`);
       const result = await res.json();
       if (result.success) {
         setRecords(result.data);
-      } else if (res.status === 401) {
-        router.push('/login');
       }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [search, session, router]);
+  }, [search]);
 
   useEffect(() => {
-    if (session) {
-      fetchRecords();
-    }
-  }, [session, fetchRecords]);
+    fetchRecords();
+  }, [fetchRecords]);
 
   // Debounce search
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (session) fetchRecords();
+      fetchRecords();
     }, 500);
     return () => clearTimeout(handler);
-  }, [search, fetchRecords, session]);
+  }, [search, fetchRecords]);
 
   const handleEdit = (record) => {
     setCurrentRecord(record);
@@ -103,14 +70,9 @@ export default function RecordsPage() {
   };
 
   const confirmDelete = async () => {
-    if (!currentRecord || !session) return;
+    if (!currentRecord) return;
     try {
-      await fetch(`/api/records/${currentRecord.id}`, { 
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
+      await fetch(`/api/records/${currentRecord.id}`, { method: 'DELETE' });
       setIsDeleteModalOpen(false);
       fetchRecords();
     } catch (err) {
@@ -125,26 +87,19 @@ export default function RecordsPage() {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    if (!session) return;
     try {
       if (currentRecord) {
         // Edit
         await fetch(`/api/records/${currentRecord.id}`, {
           method: 'PUT',
-          headers: { 
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       } else {
         // Add
         await fetch(`/api/records`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       }
@@ -154,17 +109,6 @@ export default function RecordsPage() {
       console.error(err);
     }
   };
-
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-[var(--bg-color)] flex items-center justify-center p-6">
-        <div className="flex flex-col items-center gap-4 animate-pulse">
-          <svg className="w-12 h-12 text-[var(--nbi-blue)] animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-          <p className="text-[var(--text-muted)] font-medium">Verifying Secure Session...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[var(--bg-color)]">
@@ -177,7 +121,7 @@ export default function RecordsPage() {
             </div>
             <div>
               <h2 className="m-0 text-2xl font-extrabold text-[var(--nbi-blue)] tracking-tight">
-                {session.user.email}
+                Agt. MI. MONTALA
               </h2>
               <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">Official Case Registry</p>
             </div>
