@@ -6,7 +6,7 @@ export const fieldsConfig = [
   { name: "date_received", label: "Date", strategy: "label-anchored", regex: /DATE\s*:\s*(.*)/i },
   { name: "agent_on_case", label: "Agent on Case", strategy: "label-anchored", regex: /Agent[\s\-]*on[\s\-]*case\s*:\s*(.*)/i },
   { name: "ccd_no", label: "CCD No.", strategy: "label-anchored", regex: /CCD\s*No[\.\s]*:\s*(.*)/i },
-  { name: "nbi_ccn", label: "NBI-CCN", strategy: "label-anchored", regex: /NBI[\s\-]*CCN[\s\-C]*(.*)/i },
+  { name: "nbi_ccn", label: "NBI-CCN", strategy: "label-anchored", regex: /NBI[\s\-]*CCN[\s\-]*(.*)/i },
   { name: "acmo_no", label: "ACMO No.", strategy: "label-anchored", regex: /ACMO\s*No[\.\s]*:\s*(.*)/i },
   { name: "subject", label: "Subject", strategy: "label-anchored", regex: /SUBJECT\s*:\s*(.*)/i },
   { name: "complainant", label: "Complainant/RP", strategy: "label-anchored", regex: /COMPLAINANT[\s\/]*RP\s*:\s*(.*)/i },

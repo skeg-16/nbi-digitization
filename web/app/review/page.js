@@ -7,7 +7,8 @@ export default function ReviewPage() {
   const [formData, setFormData] = useState({
     date_received: '', agent_on_case: '', ccd_no: '', 
     nbi_ccn: '', acmo_no: '', subject: '', 
-    complainant: '', nature_of_case: ''
+    complainant: '', nature_of_case: '',
+    age_gender: '', contact_no: '', status: '', re_assigned: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

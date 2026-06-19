@@ -56,5 +56,10 @@ export function extractFields(ocrData) {
     }
   }
 
+  // Default acmo_no to N/A if it's not found or empty
+  if (!extracted['acmo_no'] || extracted['acmo_no'].trim() === '') {
+    extracted['acmo_no'] = 'N/A';
+  }
+
   return extracted;
 }
