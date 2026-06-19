@@ -2,11 +2,12 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies required by OpenCV and PaddleOCR
+# Install system dependencies required by OpenCV and Tesseract
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
+    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

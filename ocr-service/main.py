@@ -1,11 +1,10 @@
 from fastapi import FastAPI, File, UploadFile
-from paddleocr import PaddleOCR
 import uvicorn
 from preprocessing import process_image
+import pytesseract
+import cv2
 
 app = FastAPI(title="OCR Microservice")
-
-ocr = PaddleOCR(use_angle_cls=True, lang='en', use_gpu=False)
 
 @app.post("/ocr")
 async def perform_ocr(file: UploadFile = File(...)):
@@ -13,27 +12,31 @@ async def perform_ocr(file: UploadFile = File(...)):
     
     processed_img = process_image(image_bytes)
     
-    result = ocr.ocr(processed_img, cls=True)
+    # Convert image to grayscale for better Tesseract performance
+    gray_img = cv2.cvtColor(processed_img, cv2.COLOR_BGR2GRAY)
+    
+    # Run PyTesseract and request dictionary output containing bounding boxes
+    d = pytesseract.image_to_data(gray_img, output_type=pytesseract.Output.DICT)
     
     extracted_data = []
+    n_boxes = len(d['text'])
     
-    if result and result[0]:
-        for line in result[0]:
-            box = line[0]
-            text = line[1][0]
-            confidence = float(line[1][1])
-            
-            xs = [point[0] for point in box]
-            ys = [point[1] for point in box]
-            x_min = min(xs)
-            y_min = min(ys)
-            width = max(xs) - x_min
-            height = max(ys) - y_min
-            
+    for i in range(n_boxes):
+        text = d['text'][i].strip()
+        conf = int(d['conf'][i])
+        
+        # Only include boxes that have actual text and a positive confidence
+        if conf > 0 and text:
             extracted_data.append({
                 "text": text,
-                "confidence": confidence,
-                "bounding_box": [float(x_min), float(y_min), float(width), float(height)]
+                # Tesseract gives confidence as 0-100, normalize to 0.0-1.0
+                "confidence": float(conf) / 100.0,
+                "bounding_box": [
+                    float(d['left'][i]),
+                    float(d['top'][i]),
+                    float(d['width'][i]),
+                    float(d['height'][i])
+                ]
             })
             
     return {"data": extracted_data}
