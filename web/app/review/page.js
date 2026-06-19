@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 
 export default function ReviewPage() {
   const [formData, setFormData] = useState({
-    record_no: '', date_received: '', ccd_no: '', nbi_ccn: '',
-    nature_of_case: '', complainant: '', subject: '', agent_on_case: '',
-    age_gender: '', contact_no: '', status: '', re_assigned: ''
+    date_received: '', agent_on_case: '', ccd_no: '', 
+    nbi_ccn: '', acmo_no: '', subject: '', 
+    complainant: '', nature_of_case: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
