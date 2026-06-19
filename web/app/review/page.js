@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '../../lib/supabase';
 
 export default function ReviewPage() {
   const [formData, setFormData] = useState({
@@ -10,7 +11,18 @@ export default function ReviewPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [session, setSession] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push('/login');
+      } else {
+        setSession(session);
+      }
+    });
+  }, [router]);
 
   useEffect(() => {
     const storedData = sessionStorage.getItem('extractedData');
@@ -37,12 +49,16 @@ export default function ReviewPage() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const res = await fetch('/api/save-record', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`
+        },
         body: JSON.stringify(formData)
       });
       
@@ -59,6 +75,8 @@ export default function ReviewPage() {
   };
 
   const formatLabel = (key) => key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+  if (!session) return null;
 
   return (
     <div className="min-h-screen bg-[var(--bg-color)] flex flex-col items-center p-4 py-12 px-6">

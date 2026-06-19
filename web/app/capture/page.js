@@ -1,15 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { extractFields } from '../../lib/extractFields';
+import { supabase } from '../../lib/supabase';
 
 export default function CapturePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [session, setSession] = useState(null);
   const router = useRouter();
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push('/login');
+      } else {
+        setSession(session);
+      }
+    });
+  }, [router]);
+
   const handleCapture = async (event) => {
+    if (!session) return;
     const file = event.target.files[0];
     if (!file) return;
 
@@ -22,6 +35,9 @@ export default function CapturePage() {
 
       const response = await fetch('/api/ocr', {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        },
         body: formData,
       });
 
@@ -45,6 +61,8 @@ export default function CapturePage() {
       setLoading(false);
     }
   };
+
+  if (!session) return null; // Or a loading spinner
 
   return (
     <div className="min-h-screen bg-[var(--bg-color)] flex flex-col items-center justify-center p-6 relative overflow-hidden">
