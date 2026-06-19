@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 export async function login(formData) {
   const supabase = await createClient()
 
-  const rawUsername = formData.get('username');
+  const rawUsername = formData.get('username')?.trim()?.toLowerCase();
   // Automatically append the default domain if they just typed their username
   const email = rawUsername.includes('@') ? rawUsername : `${rawUsername}@nbi.gov.ph`;
 
