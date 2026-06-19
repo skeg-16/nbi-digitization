@@ -44,9 +44,11 @@ async function createAgentAccounts() {
     // Use first and last part to make email: e.g. "maria.montala@nbi.gov.ph"
     const firstName = parts[0];
     const lastName = parts[parts.length - 1];
-    const email = `${firstName}.${lastName}@nbi.gov.ph`;
+    const username = `${firstName}.${lastName}`;
+    const email = `${username}@nbi.gov.ph`;
 
-    console.log(`Creating account for: ${agent} -> ${email}`);
+    console.log(`Creating account for: ${agent}`);
+    console.log(`  -> Username: ${username}`);
 
     try {
       const { data, error } = await supabaseAdmin.auth.admin.createUser({
@@ -54,21 +56,22 @@ async function createAgentAccounts() {
         password: DEFAULT_PASSWORD,
         email_confirm: true,
         user_metadata: {
-          name: agent
+          name: agent,
+          username: username
         }
       });
 
       if (error) {
         if (error.message.includes('already exists')) {
-          console.log(`- Account already exists for ${email}`);
+          console.log(`  -> Account already exists for ${username}`);
         } else {
-          console.error(`- Error creating ${email}:`, error.message);
+          console.error(`  -> Error creating ${username}:`, error.message);
         }
       } else {
-        console.log(`- Success! Created user ID: ${data.user.id}`);
+        console.log(`  -> Success! Created user ID: ${data.user.id}`);
       }
     } catch (err) {
-      console.error(`- Failed to create ${email}:`, err.message);
+      console.error(`  -> Failed to create ${username}:`, err.message);
     }
   }
   

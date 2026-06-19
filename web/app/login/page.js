@@ -40,13 +40,13 @@ export default function LoginPage() {
 
         <form action={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-[var(--text-main)] uppercase tracking-wide">Email</label>
+            <label className="text-xs font-bold text-[var(--text-main)] uppercase tracking-wide">Username</label>
             <input
-              name="email"
-              type="email"
+              name="username"
+              type="text"
               required
               className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-              placeholder="agent.name@nbi.gov.ph"
+              placeholder="e.g. maria.montala"
             />
           </div>
 
