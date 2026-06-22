@@ -1,32 +1,86 @@
 @import "tailwindcss";
 
-:root[data-theme="light"], :root {
-    --bg-color: #f0f4f8;
+/* ---- Light Theme (Default if not specified) ---- */
+:root, :root[data-theme="light"] {
+    --bg-color: #f8f9fa;
     --panel-bg: #ffffff;
     --border-color: #e2e8f0;
     --border-heavy: #cbd5e1;
 
     --text-main: #1e293b;
     --text-muted: #64748b;
-    --text-accent: #0f172a;
+    --text-accent: #0b1d3a;
 
-    --nbi-blue: #0f172a; /* Deep formal navy */
-    --nbi-gold: #fbbf24; /* Subtle gold accent */
-    
-    --header-bg: #f8fafc;
-    --header-text: #475569;
+    --header-bg: #f8f9fa;
+    --header-text: #64748b;
 
-    --table-hover: #f8fafc;
-    --nbi-cell-border: #f1f5f9;
+    --table-hover: #f1f5f9;
+    --nbi-cell-border: #e2e8f0;
+    --nbi-blue: #0b1d3a;
+    --nbi-gold: #f1c40f;
 
     --btn-bg: #ffffff;
     --btn-border: #cbd5e1;
-    --btn-hover: #f8fafc;
+    --btn-hover: #f8f9fa;
 
-    --focus-ring: rgba(15, 23, 42, 0.15);
-    --focus-border: #0f172a;
+    --focus-ring: rgba(241, 196, 15, 0.3);
+    --focus-border: #f1c40f;
 
-    --red: #ef4444;
+    --red: #e74c3c;
+    
+    /* Utility colors for translucent panels that were hardcoded tailwind classes */
+    --input-bg: #ffffff;
+    --input-focus-bg: #ffffff;
+    --panel-translucent: rgba(255, 255, 255, 0.8);
+    --hover-translucent: rgba(0, 0, 0, 0.05);
+    --icon-circle-bg: rgba(11, 29, 58, 0.05);
+
+    --status-served-bg: rgba(46, 204, 113, 0.1); --status-served-txt: #2ecc71;
+    --status-waiting-bg: rgba(52, 152, 219, 0.1); --status-waiting-txt: #3498db;
+    --status-skipped-bg: rgba(231, 76, 60, 0.1); --status-skipped-txt: #e74c3c;
+    --status-noshow-bg: rgba(149, 165, 166, 0.1); --status-noshow-txt: #95a5a6;
+    --status-serving-bg: rgba(241, 196, 15, 0.1); --status-serving-txt: #e67e22;
+}
+
+/* ---- Dark Theme (Current NBI Style) ---- */
+:root[data-theme="dark"] {
+    --bg-color: #050e1d;
+    --panel-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-heavy: rgba(255, 255, 255, 0.2);
+
+    --text-main: #ffffff;
+    --text-muted: #a0aec0;
+    --text-accent: #f1c40f;
+
+    --header-bg: #0b1d3a;
+    --header-text: #a0aec0;
+
+    --table-hover: rgba(255, 255, 255, 0.05);
+    --nbi-cell-border: rgba(255, 255, 255, 0.05);
+    --nbi-blue: #0b1d3a;
+    --nbi-gold: #f1c40f;
+
+    --btn-bg: rgba(255, 255, 255, 0.05);
+    --btn-border: rgba(255, 255, 255, 0.1);
+    --btn-hover: rgba(255, 255, 255, 0.15);
+
+    --focus-ring: rgba(241, 196, 15, 0.2);
+    --focus-border: #f1c40f;
+
+    --red: #e74c3c;
+    
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --input-focus-bg: rgba(0, 0, 0, 0.5);
+    --panel-translucent: rgba(0, 0, 0, 0.2);
+    --hover-translucent: rgba(255, 255, 255, 0.05);
+    --icon-circle-bg: rgba(255, 255, 255, 0.05);
+
+    --status-served-bg: rgba(46, 204, 113, 0.1); --status-served-txt: #2ecc71;
+    --status-waiting-bg: rgba(52, 152, 219, 0.1); --status-waiting-txt: #3498db;
+    --status-skipped-bg: rgba(231, 76, 60, 0.1); --status-skipped-txt: #e74c3c;
+    --status-noshow-bg: rgba(149, 165, 166, 0.1); --status-noshow-txt: #95a5a6;
+    --status-serving-bg: rgba(241, 196, 15, 0.1); --status-serving-txt: #f1c40f;
 }
 
 body {
@@ -34,23 +88,24 @@ body {
     color: var(--text-main);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .form-input, .form-select, .form-textarea {
     padding: 10px 14px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--panel-bg);
+    background: var(--input-bg);
     color: var(--text-main);
     font-size: 0.95rem;
     outline: none;
@@ -60,54 +115,65 @@ body {
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
     border-color: var(--focus-border);
+    background: var(--input-focus-bg);
     box-shadow: 0 0 0 4px var(--focus-ring);
-    background: #ffffff;
 }
 
 .btn-formal {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: 1px solid var(--btn-border);
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--btn-bg);
     color: var(--text-main);
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 10px;
     white-space: nowrap;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .btn-formal:hover {
     background: var(--btn-hover);
     border-color: var(--border-heavy);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
 }
 
 .btn-formal:active {
-    transform: scale(0.98);
+    transform: translateY(0);
 }
 
 .btn-primary {
-    background: var(--nbi-blue) !important;
-    border-color: var(--nbi-blue) !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2), 0 2px 4px -1px rgba(15, 23, 42, 0.1) !important;
+    background: var(--nbi-gold) !important;
+    border: none !important;
+    color: var(--bg-color) !important;
+    box-shadow: 0 4px 15px var(--focus-ring) !important;
 }
 
 .btn-primary:hover {
-    background: #1e293b !important;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 8px -1px rgba(15, 23, 42, 0.25), 0 4px 6px -1px rgba(15, 23, 42, 0.15) !important;
+    background: #FFB800 !important;
+    box-shadow: 0 6px 20px var(--focus-ring) !important;
+    transform: translateY(-2px) !important;
+    opacity: 1 !important;
 }
 
 .btn-danger {
     background: var(--red) !important;
     color: #fff !important;
     border-color: var(--red) !important;
+}
+
+.bg-grid-pattern {
+    background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: center center;
 }
 
 .data-table {
@@ -135,6 +201,10 @@ body {
     vertical-align: middle;
 }
 
+.data-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
 .data-table tbody tr:hover {
     background: var(--table-hover);
 }
@@ -148,9 +218,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--nbi-gold);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--text-accent);
 }

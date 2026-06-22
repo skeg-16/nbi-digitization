@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '../../../../lib/supabase/server';
+import { supabaseAdmin } from '../../../../lib/supabase';
 
 export async function PUT(request, { params }) {
   try {
@@ -24,6 +25,17 @@ export async function PUT(request, { params }) {
       .single();
 
     if (error) throw error;
+
+    // Log update
+    if (user) {
+      await supabaseAdmin.from('audit_logs').insert([{
+        record_id: id,
+        agent_name: user.user_metadata?.name || user.email,
+        action_type: 'UPDATE',
+        details: { message: 'Record updated.', updated_fields: data }
+      }]);
+    }
+
     return NextResponse.json({ success: true, data: updatedRecord });
   } catch (error) {
     console.error('Error updating record:', error);
@@ -43,6 +55,19 @@ export async function DELETE(request, { params }) {
       .eq('id', id);
 
     if (error) throw error;
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Log delete
+    if (user) {
+      await supabaseAdmin.from('audit_logs').insert([{
+        record_id: id,
+        agent_name: user.user_metadata?.name || user.email,
+        action_type: 'DELETE',
+        details: { message: 'Record deleted.' }
+      }]);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting record:', error);

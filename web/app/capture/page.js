@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { extractFields } from '../../lib/extractFields';
+import ThemeToggle from '../../components/ThemeToggle';
 
 export default function CapturePage() {
   const [loading, setLoading] = useState(false);
@@ -47,16 +48,17 @@ export default function CapturePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--bg-color)] flex flex-col items-center justify-center p-6 relative overflow-hidden transition-colors duration-300">
+      <ThemeToggle className="absolute top-6 right-6 z-50" />
       {/* Background Decor */}
       <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/5 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="max-w-md w-full bg-[var(--panel-bg)] rounded-2xl shadow-2xl p-10 space-y-8 text-center border border-[var(--border-color)] animate-fade-in relative z-10">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-16 w-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
-            <svg className="w-8 h-8 text-[var(--nbi-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          <div className="h-16 w-16 bg-[var(--nbi-gold)] rounded-full flex items-center justify-center mb-2">
+            <svg className="w-8 h-8 text-[var(--bg-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[var(--nbi-blue)]">Scan Form</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[var(--text-main)]">Scan Form</h1>
           <p className="text-[var(--text-muted)] font-medium text-sm">Take a clear photo of the physical form to auto-extract the core fields.</p>
         </div>
         
@@ -66,7 +68,7 @@ export default function CapturePage() {
           <label 
             htmlFor="cameraInput" 
             className={`flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed transition-all cursor-pointer group
-              ${loading ? 'bg-gray-50 border-gray-300 text-gray-400 cursor-not-allowed' : 'bg-blue-50/30 border-blue-200 hover:border-blue-400 hover:bg-blue-50/50 text-[var(--nbi-blue)]'}`}
+              ${loading ? 'bg-[var(--hover-translucent)] border-[var(--border-color)] text-[var(--text-muted)] cursor-not-allowed' : 'bg-[var(--hover-translucent)] border-[var(--nbi-gold)]/30 hover:border-[var(--nbi-gold)] hover:bg-[var(--panel-translucent)] text-[var(--nbi-gold)]'}`}
           >
             {loading ? (
               <div className="flex flex-col items-center">
@@ -74,7 +76,7 @@ export default function CapturePage() {
                 <span className="font-semibold text-sm">Processing Image...</span>
               </div>
             ) : (
-              <div className="flex flex-col items-center text-blue-600 group-hover:text-blue-700">
+              <div className="flex flex-col items-center text-[var(--nbi-gold)] group-hover:text-[#FFB800] transition-colors">
                 <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 <span className="font-bold text-sm tracking-wide">TAP TO OPEN CAMERA</span>
               </div>
@@ -90,7 +92,7 @@ export default function CapturePage() {
             disabled={loading}
           />
         </div>
-        <button className="btn-formal w-full justify-center mt-6 py-3 hover:bg-gray-50" onClick={() => router.push('/')} disabled={loading}>
+        <button className="btn-formal w-full justify-center mt-6 py-3 hover:bg-[var(--hover-translucent)] text-[var(--text-main)]" onClick={() => router.push('/')} disabled={loading}>
           Back to Home
         </button>
       </div>
