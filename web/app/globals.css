@@ -151,7 +151,7 @@ body {
 .btn-primary {
     background: var(--nbi-gold) !important;
     border: none !important;
-    color: var(--bg-color) !important;
+    color: #0b1d3a !important;
     box-shadow: 0 4px 15px var(--focus-ring) !important;
 }
 

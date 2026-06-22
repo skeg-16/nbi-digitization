@@ -41,7 +41,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex flex-col items-center gap-2 mb-8 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight text-[var(--nbi-gold)] drop-shadow-sm">System Login</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[var(--text-accent)] drop-shadow-sm">System Login</h1>
           <p className="text-[var(--text-muted)] font-medium text-sm">Sign in to access your official records workspace.</p>
         </div>
 
@@ -106,7 +106,7 @@ export default function LoginPage() {
             <button 
               type="button" 
               onClick={() => setShowForgotModal(true)} 
-              className="font-semibold text-[var(--nbi-gold)] hover:text-[var(--nbi-blue)] transition-colors"
+              className="font-semibold text-[var(--text-accent)] hover:text-[var(--nbi-blue)] transition-colors"
             >
               Forgot password?
             </button>
