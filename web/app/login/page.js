@@ -63,7 +63,8 @@ export default function LoginPage() {
                 name="username"
                 type="text"
                 required
-                className="form-input w-full pl-11 pr-4 py-3 rounded-xl focus:border-[var(--nbi-gold)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all outline-none font-medium placeholder-gray-500"
+                className="form-input w-full pr-4 py-3 rounded-xl focus:border-[var(--nbi-gold)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all outline-none font-medium placeholder-gray-500"
+                style={{ paddingLeft: '2.75rem' }}
                 placeholder="e.g. maria.montala"
               />
             </div>
@@ -79,7 +80,8 @@ export default function LoginPage() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 required
-                className="form-input w-full pl-11 pr-12 py-3 rounded-xl focus:border-[var(--nbi-gold)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all outline-none font-medium placeholder-gray-500"
+                className="form-input w-full pr-12 py-3 rounded-xl focus:border-[var(--nbi-gold)] focus:ring-2 focus:ring-[var(--focus-ring)] transition-all outline-none font-medium placeholder-gray-500"
+                style={{ paddingLeft: '2.75rem' }}
                 placeholder="••••••••"
               />
               <button 
