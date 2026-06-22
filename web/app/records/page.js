@@ -211,25 +211,47 @@ export default function RecordsPage() {
               <svg className="w-5 h-5 text-[var(--bg-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             </div>
             <div>
-              <h2 className="m-0 text-2xl font-extrabold text-[var(--nbi-gold)] tracking-tight">
+              <h2 className="m-0 text-2xl font-extrabold text-[var(--text-accent)] tracking-tight">
                 {agentName}
               </h2>
               <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">Official Case Registry</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-            <button className="btn-formal hover:bg-[var(--hover-translucent)] text-[var(--text-main)]" onClick={() => router.push('/')}>Home</button>
-            <button className="btn-formal text-[var(--text-main)] hover:bg-[var(--hover-translucent)]" onClick={() => setShowFilters(!showFilters)}>Filters</button>
+            <div className="w-px h-6 bg-[var(--border-color)] mx-1"></div>
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--text-main)] bg-[var(--icon-circle-bg)] hover:bg-[var(--hover-translucent)] rounded-full transition-all border border-transparent hover:border-[var(--border-color)]" onClick={() => router.push('/')}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+              Home
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--text-main)] bg-[var(--icon-circle-bg)] hover:bg-[var(--hover-translucent)] rounded-full transition-all border border-transparent hover:border-[var(--border-color)]" onClick={() => setShowFilters(!showFilters)}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+              Filters
+            </button>
             <div className="relative group z-20">
-              <button className="btn-formal text-[var(--text-main)] hover:bg-[var(--hover-translucent)]">Export</button>
-              <div className="absolute right-0 mt-2 w-32 bg-[var(--panel-bg)] border border-[var(--border-color)] rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all flex flex-col py-1">
-                <button className="w-full text-left px-4 py-2 text-sm text-[var(--text-main)] hover:bg-[var(--hover-translucent)]" onClick={handleExportCSV}>As CSV</button>
-                <button className="w-full text-left px-4 py-2 text-sm text-[var(--text-main)] hover:bg-[var(--hover-translucent)]" onClick={handleExportPDF}>As PDF</button>
+              <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--text-main)] bg-[var(--icon-circle-bg)] hover:bg-[var(--hover-translucent)] rounded-full transition-all border border-transparent hover:border-[var(--border-color)]">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                Export
+                <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <div className="absolute right-0 mt-2 w-40 bg-[var(--panel-bg)] border border-[var(--border-color)] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all flex flex-col py-2 overflow-hidden">
+                <button className="w-full text-left px-4 py-2.5 text-sm text-[var(--text-main)] hover:bg-[var(--hover-translucent)] flex items-center gap-2" onClick={handleExportCSV}>
+                  <span className="font-mono text-[10px] bg-[var(--icon-circle-bg)] px-1.5 py-0.5 rounded text-[var(--text-muted)]">CSV</span> Data Export
+                </button>
+                <button className="w-full text-left px-4 py-2.5 text-sm text-[var(--text-main)] hover:bg-[var(--hover-translucent)] flex items-center gap-2" onClick={handleExportPDF}>
+                  <span className="font-mono text-[10px] bg-[var(--icon-circle-bg)] px-1.5 py-0.5 rounded text-[var(--text-muted)]">PDF</span> Report Form
+                </button>
               </div>
             </div>
-            <button className="btn-formal btn-primary px-5 py-2" onClick={handleAdd}>Add Record</button>
-            <button className="btn-formal text-[var(--red)] border-[var(--red)] hover:bg-[var(--hover-translucent)] ml-2" onClick={() => logout()}>Logout</button>
+            <div className="w-px h-6 bg-[var(--border-color)] mx-1"></div>
+            <button className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-[#0b1d3a] bg-[var(--nbi-gold)] hover:bg-[#FFB800] hover:-translate-y-0.5 rounded-full transition-all shadow-[0_4px_12px_var(--focus-ring)] ml-1" onClick={handleAdd}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
+              Add Record
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--red)] bg-red-500/10 hover:bg-red-500/20 rounded-full transition-all ml-1" onClick={() => logout()}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              Logout
+            </button>
           </div>
         </div>
         <div className="flex flex-col gap-4">
