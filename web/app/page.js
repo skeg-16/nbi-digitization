@@ -63,15 +63,16 @@ export default function Home() {
             <span className="text-sm font-normal text-[var(--text-muted)]">Search and manage records</span>
           </Link>
           
-          <Link href="/capture" className="btn-formal btn-primary w-full py-8 text-lg shadow-xl shadow-[var(--focus-ring)] group relative overflow-hidden rounded-2xl flex flex-col items-center justify-center gap-3">
-            <div className="relative z-10 p-4 bg-black/10 rounded-full group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-8 h-8 text-[#0b1d3a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Link href="/capture" className="w-full py-8 text-lg group relative overflow-hidden rounded-2xl flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#0b1d3a] to-[#1e3a8a] shadow-xl hover:shadow-[0_8px_30px_rgba(11,29,58,0.4)] transition-all hover:-translate-y-1 border border-[#2a4365]">
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
+            <div className="relative z-10 p-4 bg-white/10 backdrop-blur-md rounded-full group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300 border border-white/10">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <span className="relative z-10 font-bold tracking-wide text-[#0b1d3a]">Capture New Document</span>
-            <span className="relative z-10 text-sm font-normal text-[#0b1d3a] opacity-80">AI-powered OCR entry</span>
+            <span className="relative z-10 font-extrabold tracking-wide text-white drop-shadow-md">Capture OCR Image</span>
+            <span className="relative z-10 text-sm font-medium text-blue-100">Scan & Auto-Extract Data</span>
           </Link>
         </div>
 

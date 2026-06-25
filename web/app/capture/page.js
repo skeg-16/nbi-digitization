@@ -67,8 +67,8 @@ export default function CapturePage() {
         <div className="relative mt-8">
           <label 
             htmlFor="cameraInput" 
-            className={`flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed transition-all cursor-pointer group
-              ${loading ? 'bg-[var(--hover-translucent)] border-[var(--border-color)] text-[var(--text-muted)] cursor-not-allowed' : 'bg-[var(--hover-translucent)] border-[var(--nbi-gold)]/30 hover:border-[var(--nbi-gold)] hover:bg-[var(--panel-translucent)] text-[var(--nbi-gold)]'}`}
+            className={`flex flex-col items-center justify-center w-full h-32 rounded-2xl transition-all cursor-pointer group shadow-xl relative overflow-hidden
+              ${loading ? 'bg-[var(--hover-translucent)] border-2 border-dashed border-[var(--border-color)] text-[var(--text-muted)] cursor-not-allowed' : 'bg-gradient-to-br from-[#0b1d3a] to-[#1e3a8a] border border-[#2a4365] hover:shadow-[0_8px_30px_rgba(11,29,58,0.4)] hover:-translate-y-1'}`}
           >
             {loading ? (
               <div className="flex flex-col items-center">
@@ -76,10 +76,15 @@ export default function CapturePage() {
                 <span className="font-semibold text-sm">Processing Image...</span>
               </div>
             ) : (
-              <div className="flex flex-col items-center text-[var(--nbi-gold)] group-hover:text-[#FFB800] transition-colors">
-                <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                <span className="font-bold text-sm tracking-wide">TAP TO OPEN CAMERA</span>
-              </div>
+              <>
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
+                <div className="flex flex-col items-center text-white relative z-10">
+                  <div className="p-3 bg-white/10 backdrop-blur-md rounded-full group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300 border border-white/10 mb-2">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                  </div>
+                  <span className="font-extrabold text-sm tracking-widest uppercase drop-shadow-md">Tap to Open Camera</span>
+                </div>
+              </>
             )}
           </label>
           <input 

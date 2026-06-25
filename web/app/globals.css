@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ---- Light Theme (Default if not specified) ---- */
-:root, :root[data-theme="light"] {
+:root {
     --bg-color: #f8f9fa;
     --panel-bg: #ffffff;
     --border-color: #e2e8f0;
@@ -43,7 +43,7 @@
 }
 
 /* ---- Dark Theme (Current NBI Style) ---- */
-:root[data-theme="dark"] {
+.dark {
     --bg-color: #050e1d;
     --panel-bg: rgba(255, 255, 255, 0.03);
     --border-color: rgba(255, 255, 255, 0.08);

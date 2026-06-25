@@ -34,6 +34,11 @@ export default function RecordsPage() {
   const [formData, setFormData] = useState({});
   const [agentName, setAgentName] = useState('Loading...');
 
+  // Manager State
+  const [isManager, setIsManager] = useState(false);
+  const [agentsList, setAgentsList] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const supabase = createClient();
 
   const fetchRecords = useCallback(async () => {
@@ -70,6 +75,21 @@ export default function RecordsPage() {
       } else {
         setAgentName('Guest');
       }
+
+      const managerCheck = user?.user_metadata?.role === 'manager';
+      setIsManager(managerCheck);
+      
+      if (managerCheck) {
+        try {
+          const res = await fetch('/api/agents');
+          const result = await res.json();
+          if (result.success) {
+            setAgentsList(result.data);
+          }
+        } catch (err) {
+          console.error('Error fetching agents:', err);
+        }
+      }
     }
     getUser();
     fetchRecords();
@@ -97,7 +117,7 @@ export default function RecordsPage() {
   const handleAdd = () => {
     setCurrentRecord(null);
     setFormData({
-      date_received: '', agent_on_case: '', ccd_no: '', 
+      date_received: '', agent_on_case: isManager && agentFilter ? agentFilter : '', ccd_no: '', 
       nbi_ccn: '', complainant: '', nature_of_case: ''
     });
     setIsEditModalOpen(true);
@@ -121,6 +141,15 @@ export default function RecordsPage() {
 
   const submitForm = async (e) => {
     e.preventDefault();
+
+    // Prevent saving completely empty records
+    const isE = (val) => val === null || val === undefined || val.toString().trim() === '';
+    if (isE(formData.ccd_no) && isE(formData.nbi_ccn) && isE(formData.complainant) && isE(formData.nature_of_case)) {
+      alert("Cannot save an empty record. Please fill in at least one of the main fields (CCD No, NBI-CCN, Complainant, or Nature of Case).");
+      return;
+    }
+
+    setSubmitting(true);
     try {
       if (currentRecord) {
         await fetch(`/api/records/${currentRecord.id}`, {
@@ -207,14 +236,55 @@ export default function RecordsPage() {
       <div className="action-bar flex flex-col gap-5 p-6 bg-[var(--panel-bg)] border-b border-[var(--border-color)] flex-shrink-0 shadow-sm z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="h-10 w-10 bg-[var(--nbi-gold)] rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--bg-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            <div className="h-10 w-10 bg-[var(--nbi-gold)] rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-[#0b1d3a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             </div>
             <div>
               <h2 className="m-0 text-2xl font-extrabold text-[var(--text-accent)] tracking-tight">
-                {agentName}
+                {isManager ? (
+                  <div className="relative inline-block text-left z-50">
+                    <button
+                      type="button"
+                      className="inline-flex justify-between items-center w-full px-4 py-2 bg-[var(--icon-circle-bg)] border border-[var(--border-color)] hover:border-[var(--text-accent)] text-[var(--text-accent)] text-xl md:text-2xl font-extrabold rounded-xl focus:outline-none focus:ring-4 focus:ring-[var(--focus-ring)] transition-all shadow-sm"
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    >
+                      {agentFilter === '' ? 'All Agents (Manager View)' : agentFilter}
+                      <svg className={`ml-3 w-6 h-6 opacity-70 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+
+                    {isDropdownOpen && (
+                      <>
+                        {/* Overlay to close dropdown when clicking outside */}
+                        <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)}></div>
+                        <div className="absolute left-0 lg:right-0 mt-2 w-72 origin-top-right rounded-xl bg-[var(--bg-color)] border border-[var(--border-color)] shadow-2xl z-50 overflow-hidden transform opacity-100 scale-100 transition-all duration-200 ease-out">
+                          <div className="py-2 max-h-80 overflow-y-auto relative z-50 bg-[var(--panel-bg)] backdrop-blur-xl">
+                            <button
+                              className={`w-full text-left px-4 py-3 text-sm font-semibold hover:bg-[var(--hover-translucent)] transition-colors ${agentFilter === '' ? 'bg-[var(--icon-circle-bg)] text-[var(--text-accent)]' : 'text-[var(--text-main)]'}`}
+                              onClick={() => { setAgentFilter(''); setIsDropdownOpen(false); }}
+                            >
+                              All Agents (Manager View)
+                            </button>
+                            {agentsList.map(agent => (
+                              <button
+                                key={agent}
+                                className={`w-full text-left px-4 py-3 text-sm font-semibold hover:bg-[var(--hover-translucent)] transition-colors border-t border-[var(--border-color)]/50 ${agentFilter === agent ? 'bg-[var(--icon-circle-bg)] text-[var(--text-accent)]' : 'text-[var(--text-main)]'}`}
+                                onClick={() => { setAgentFilter(agent); setIsDropdownOpen(false); }}
+                              >
+                                {agent}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  agentName
+                )}
               </h2>
-              <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">Official Case Registry</p>
+              <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-1">
+                {isManager ? 'Manager Dashboard' : 'Official Case Registry'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -297,7 +367,7 @@ export default function RecordsPage() {
               ) : (
                 records.map(record => (
                   <tr key={record.id} className="group">
-                    <td className="font-semibold text-[var(--nbi-gold)]">{record.date_received ? new Date(record.date_received).toLocaleDateString() : '-'}</td>
+                    <td className="font-bold text-[var(--text-accent)]">{record.date_received ? new Date(record.date_received).toLocaleDateString() : '-'}</td>
                     <td className="font-mono text-sm text-[var(--text-muted)] bg-[var(--hover-translucent)] px-2 py-1 rounded inline-block mt-2">
                       {record.ccd_no || '-'}
                     </td>
@@ -382,7 +452,7 @@ export default function RecordsPage() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-fade-in">
           <div className="bg-[var(--panel-bg)] rounded-2xl p-8 w-full max-w-3xl shadow-2xl border border-[var(--border-color)] flex flex-col max-h-[90vh]">
             <div className="flex justify-between items-center mb-6 border-b border-[var(--border-color)] pb-4">
-              <h3 className="text-xl font-extrabold text-[var(--nbi-gold)] tracking-tight">Audit Logs</h3>
+              <h3 className="text-xl font-extrabold text-[var(--text-accent)] tracking-tight">Audit Logs</h3>
               <button className="text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--hover-translucent)] rounded-full p-1 transition-colors" onClick={() => setIsAuditModalOpen(false)}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>

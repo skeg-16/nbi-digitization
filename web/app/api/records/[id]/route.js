@@ -13,7 +13,8 @@ export async function PUT(request, { params }) {
     const { data: { user } } = await supabase.auth.getUser();
 
     // Prevent malicious or accidental edits to the agent_on_case field
-    if (user) {
+    const isManager = user?.user_metadata?.role === 'manager';
+    if (user && !isManager) {
       data.agent_on_case = user.user_metadata?.name || user.email;
     }
 

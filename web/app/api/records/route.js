@@ -24,12 +24,17 @@ export async function GET(request) {
     const agentName = user.user_metadata?.name || '';
     const lastName = agentName ? agentName.split(' ').pop() : user.email;
 
+    const isManager = user.user_metadata?.role === 'manager';
+
     // STRICT ISOLATION via API: Use supabaseAdmin to bypass RLS for old records, but forcefully filter
     let query = supabaseAdmin
       .from('complaints')
       .select('*', { count: 'exact' })
-      .or(`user_id.eq.${user.id},agent_on_case.ilike.%${lastName}%`)
       .order('created_at', { ascending: false });
+
+    if (!isManager) {
+      query = query.or(`user_id.eq.${user.id},agent_on_case.ilike.%${lastName}%`);
+    }
 
     if (status) {
       query = query.eq('status', status);
@@ -76,10 +81,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Automatically inject the user_id of the agent creating the record
-    data.user_id = user.id;
-    // Force the agent_on_case text to exactly match the logged-in user
-    data.agent_on_case = user.user_metadata?.name || user.email;
+    const isManager = user.user_metadata?.role === 'manager';
+
+    if (!isManager || !data.agent_on_case) {
+      // Automatically inject the user_id of the agent creating the record
+      data.user_id = user.id;
+      // Force the agent_on_case text to exactly match the logged-in user
+      data.agent_on_case = user.user_metadata?.name || user.email;
+    } else {
+      // Manager is creating record on behalf of an agent
+      data.user_id = user.id;
+    }
 
     const { data: newRecord, error } = await supabase
       .from('complaints')
