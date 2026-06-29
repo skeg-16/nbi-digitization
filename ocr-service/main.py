@@ -5,7 +5,7 @@ from preprocessing import process_image
 
 app = FastAPI(title="OCR Microservice")
 
-ocr = PaddleOCR(use_angle_cls=True, lang='en', use_gpu=False)
+ocr = PaddleOCR(use_angle_cls=True, lang='en', use_gpu=True)
 
 @app.post("/ocr")
 async def perform_ocr(file: UploadFile = File(...)):
