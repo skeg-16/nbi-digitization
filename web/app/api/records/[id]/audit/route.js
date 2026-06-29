@@ -4,7 +4,8 @@ import { supabaseAdmin } from '../../../../../lib/supabase';
 
 export async function GET(request, { params }) {
   try {
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     const supabaseUserClient = await createClient();
     const { data: { user }, error: authError } = await supabaseUserClient.auth.getUser();
 

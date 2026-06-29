@@ -2,11 +2,44 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "main": "electron-main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:desktop": "node scripts/build-desktop.js"
+  },
+  "build": {
+    "appId": "com.nbisystem.desktop",
+    "productName": "NBI Digitization System",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron-main.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "standalone",
+        "filter": ["**/*"]
+      },
+      {
+        "from": ".next/standalone/node_modules",
+        "to": "standalone/node_modules",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "../ocr-service/dist/ocr-service",
+        "to": "ocr-service",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    }
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
@@ -22,8 +55,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "electron": "^42.5.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "fs-extra": "^11.3.5",
     "tailwindcss": "^4"
   }
 }

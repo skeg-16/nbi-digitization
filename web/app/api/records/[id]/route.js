@@ -4,7 +4,8 @@ import { supabaseAdmin } from '../../../../lib/supabase';
 
 export async function PUT(request, { params }) {
   try {
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     const data = await request.json();
     
     if (data.date_received === '') data.date_received = null;
@@ -17,6 +18,11 @@ export async function PUT(request, { params }) {
     if (user && !isManager) {
       data.agent_on_case = user.user_metadata?.name || user.email;
     }
+
+    // Strip read-only or strictly protected fields before updating
+    delete data.id;
+    delete data.created_at;
+    delete data.user_id;
 
     const { data: updatedRecord, error } = await supabase
       .from('complaints')
@@ -46,7 +52,8 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     
     const supabase = await createClient();
 

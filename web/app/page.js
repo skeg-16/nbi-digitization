@@ -12,6 +12,11 @@ export default function Home() {
 
   useEffect(() => {
     async function getUser() {
+      if (process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true') {
+        setAgentName('Guest Analyst');
+        setLoading(false);
+        return;
+      }
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -52,16 +57,18 @@ export default function Home() {
         </div>
         
         {/* Action Buttons */}
-        <div className="grid sm:grid-cols-2 gap-6 mt-10">
-          <Link href="/records" className="btn-formal w-full py-8 text-lg hover:bg-[var(--hover-translucent)] group rounded-2xl flex flex-col items-center justify-center gap-3 border border-[var(--border-color)] hover:border-[var(--nbi-gold)] transition-all bg-[var(--panel-translucent)]">
-            <div className="p-4 bg-[var(--icon-circle-bg)] rounded-full shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-              <svg className="w-8 h-8 text-[var(--nbi-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <span className="font-bold tracking-wide text-[var(--text-main)]">View Official Dashboard</span>
-            <span className="text-sm font-normal text-[var(--text-muted)]">Search and manage records</span>
-          </Link>
+        <div className={`grid gap-6 mt-10 ${process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true' ? 'sm:grid-cols-1 max-w-sm mx-auto' : 'sm:grid-cols-2'}`}>
+          {process.env.NEXT_PUBLIC_WEB_ONLY_OCR !== 'true' && (
+            <Link href="/records" className="btn-formal w-full py-8 text-lg hover:bg-[var(--hover-translucent)] group rounded-2xl flex flex-col items-center justify-center gap-3 border border-[var(--border-color)] hover:border-[var(--nbi-gold)] transition-all bg-[var(--panel-translucent)]">
+              <div className="p-4 bg-[var(--icon-circle-bg)] rounded-full shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <svg className="w-8 h-8 text-[var(--nbi-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <span className="font-bold tracking-wide text-[var(--text-main)]">View Official Dashboard</span>
+              <span className="text-sm font-normal text-[var(--text-muted)]">Search and manage records</span>
+            </Link>
+          )}
           
           <Link href="/capture" className="w-full py-8 text-lg group relative overflow-hidden rounded-2xl flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#0b1d3a] to-[#1e3a8a] shadow-xl hover:shadow-[0_8px_30px_rgba(11,29,58,0.4)] transition-all hover:-translate-y-1 border border-[#2a4365]">
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>

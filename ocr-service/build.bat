@@ -1,0 +1,6 @@
+@echo off
+echo Building OCR Service...
+pyinstaller --name ocr-service --onefile main.py
+echo Copying executable to web directory...
+copy /Y dist\ocr-service.exe ..\web\ocr-service.exe
+echo Done.

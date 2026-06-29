@@ -11,6 +11,12 @@ export default function RecordsPage() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true') {
+      router.push('/');
+    }
+  }, [router]);
+
   // Filters
   const [search, setSearch] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -33,6 +39,7 @@ export default function RecordsPage() {
   // Form State for Add/Edit
   const [formData, setFormData] = useState({});
   const [agentName, setAgentName] = useState('Loading...');
+  const [submitting, setSubmitting] = useState(false);
 
   // Manager State
   const [isManager, setIsManager] = useState(false);
@@ -151,23 +158,33 @@ export default function RecordsPage() {
 
     setSubmitting(true);
     try {
+      let response;
       if (currentRecord) {
-        await fetch(`/api/records/${currentRecord.id}`, {
+        response = await fetch(`/api/records/${currentRecord.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       } else {
-        await fetch(`/api/records`, {
+        response = await fetch(`/api/records`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       }
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to save record');
+      }
+
       setIsEditModalOpen(false);
       fetchRecords();
     } catch (err) {
       console.error(err);
+      alert(`Error saving record: ${err.message}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -422,8 +439,10 @@ export default function RecordsPage() {
                 <textarea className="form-input w-full" rows="3" value={formData.nature_of_case || ''} onChange={e => setFormData({...formData, nature_of_case: e.target.value})}></textarea>
               </div>
               <div className="flex justify-end gap-3 mt-8">
-                <button type="button" className="btn-formal text-[var(--text-main)] hover:bg-[var(--hover-translucent)]" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-                <button type="submit" className="btn-formal btn-primary">Save Record</button>
+                <button type="button" className="btn-formal text-[var(--text-main)] hover:bg-[var(--hover-translucent)]" onClick={() => setIsEditModalOpen(false)} disabled={submitting}>Cancel</button>
+                <button type="submit" className="btn-formal btn-primary" disabled={submitting}>
+                  {submitting ? 'Saving...' : 'Save Record'}
+                </button>
               </div>
             </form>
           </div>
