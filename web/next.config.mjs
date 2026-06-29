@@ -4,10 +4,12 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const isVercel = process.env.VERCEL === '1';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
-  outputFileTracingRoot: __dirname,
+  output: isVercel ? undefined : "standalone",
+  outputFileTracingRoot: isVercel ? undefined : __dirname,
 };
 
 export default nextConfig;
