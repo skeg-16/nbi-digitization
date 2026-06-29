@@ -12,11 +12,6 @@ export default function Home() {
 
   useEffect(() => {
     async function getUser() {
-      if (process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true') {
-        setAgentName('Guest Analyst');
-        setLoading(false);
-        return;
-      }
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
