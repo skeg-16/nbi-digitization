@@ -38,22 +38,6 @@ export default function ReviewPage() {
   const handleSave = async (e) => {
     e.preventDefault();
 
-    if (process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true') {
-      try {
-        const textToCopy = Object.entries(formData)
-          .map(([k, v]) => `${formatLabel(k)}: ${v}`)
-          .join('\n');
-        await navigator.clipboard.writeText(textToCopy);
-        alert('Extracted data copied to clipboard!');
-        sessionStorage.removeItem('extractedData');
-        router.push('/');
-      } catch (err) {
-        console.error('Failed to copy', err);
-        alert('Could not copy data automatically. Please copy it manually.');
-      }
-      return;
-    }
-
     setLoading(true);
     setError(null);
     try {
@@ -108,9 +92,7 @@ export default function ReviewPage() {
           <div className="flex justify-end gap-4 mt-12 pt-6 border-t border-[var(--border-color)]">
             <button type="button" className="btn-formal hover:bg-gray-50" onClick={() => router.push('/')} disabled={loading}>Cancel</button>
             <button type="submit" className="btn-formal btn-primary shadow-lg shadow-blue-900/20 px-8" disabled={loading}>
-              {process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true' 
-                ? 'Copy Data' 
-                : (loading ? 'Processing...' : 'Save Record')}
+              {loading ? 'Processing...' : 'Save Record'}
             </button>
           </div>
         </form>

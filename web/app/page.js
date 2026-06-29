@@ -52,8 +52,7 @@ export default function Home() {
         </div>
         
         {/* Action Buttons */}
-        <div className={`grid gap-6 mt-10 ${process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true' ? 'sm:grid-cols-1 max-w-sm mx-auto' : 'sm:grid-cols-2'}`}>
-          {process.env.NEXT_PUBLIC_WEB_ONLY_OCR !== 'true' && (
+        <div className="grid gap-6 mt-10 sm:grid-cols-2">
             <Link href="/records" className="btn-formal w-full py-8 text-lg hover:bg-[var(--hover-translucent)] group rounded-2xl flex flex-col items-center justify-center gap-3 border border-[var(--border-color)] hover:border-[var(--nbi-gold)] transition-all bg-[var(--panel-translucent)]">
               <div className="p-4 bg-[var(--icon-circle-bg)] rounded-full shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                 <svg className="w-8 h-8 text-[var(--nbi-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +62,6 @@ export default function Home() {
               <span className="font-bold tracking-wide text-[var(--text-main)]">View Official Dashboard</span>
               <span className="text-sm font-normal text-[var(--text-muted)]">Search and manage records</span>
             </Link>
-          )}
           
           <Link href="/capture" className="w-full py-8 text-lg group relative overflow-hidden rounded-2xl flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#0b1d3a] to-[#1e3a8a] shadow-xl hover:shadow-[0_8px_30px_rgba(11,29,58,0.4)] transition-all hover:-translate-y-1 border border-[#2a4365]">
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>

@@ -4,9 +4,6 @@ import { redirect } from 'next/navigation';
 export const revalidate = 0; // Disable static caching for this page to always fetch latest
 
 export default async function DashboardPage() {
-  if (process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true') {
-    redirect('/');
-  }
 
   let records = [];
   let error = null;

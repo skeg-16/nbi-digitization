@@ -11,11 +11,7 @@ export default function RecordsPage() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_WEB_ONLY_OCR === 'true') {
-      router.push('/');
-    }
-  }, [router]);
+
 
   // Filters
   const [search, setSearch] = useState('');
